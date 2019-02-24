@@ -37,6 +37,6 @@ const std::initializer_list<CheckpointData> CHECKPOINTS = {
 {   30000, ""},
 {   35000, ""},
 {   40000, ""},
-};
 */
+};
 }
