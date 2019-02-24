@@ -56,7 +56,7 @@ const uint64_t GENESIS_BLOCK_REWARD                          = UINT64_C(50000000
 10,000 Airdrops and bountys
 
 
-/* How to generate a premine:
+How to generate a premine:
 
 * Compile your code
 
