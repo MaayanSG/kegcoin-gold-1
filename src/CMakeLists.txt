@@ -162,7 +162,7 @@ add_dependencies(zedwallet version)
 
 # Finally build the binaries
 
-perty(TARGET TurtleCoind PROPERTY OUTPUT_NAME "kegcoind")
+set_property(TARGET TurtleCoind PROPERTY OUTPUT_NAME "kegcoind")
 set_property(TARGET zedwallet PROPERTY OUTPUT_NAME "zedwallet")
 set_property(TARGET zedwallet++ PROPERTY OUTPUT_NAME "zedwallet-beta")
 set_property(TARGET service PROPERTY OUTPUT_NAME "kegcoin-service")
