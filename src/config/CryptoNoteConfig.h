@@ -284,7 +284,7 @@ const static   boost::uuids::uuid CRYPTONOTE_NETWORK         =
 };
 
 const char* const SEED_NODES[] = {
-  "dkc-hvac.com:5047"
+  "dkc-hvac.com:5047",
   "18.130.158.118:5047"
 };
 } // CryptoNote
