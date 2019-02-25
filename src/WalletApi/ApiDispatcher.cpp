@@ -1,4 +1,4 @@
-// Copyright (c) 2018, The TurtleCoin Developers
+// Copyright (c) 2018-2019, The TurtleCoin Developers
 // 
 // Please see the included LICENSE file for more information.
 
@@ -9,6 +9,8 @@
 #include <config/CryptoNoteConfig.h>
 
 #include <CryptoNoteCore/Mixins.h>
+
+#include <crypto/random.h>
 
 #include <cryptopp/modes.h>
 #include <cryptopp/sha.h>
@@ -39,7 +41,7 @@ ApiDispatcher::ApiDispatcher(
     m_rpcPassword(rpcPassword)
 {
     /* Generate the salt used for pbkdf2 api authentication */
-    Crypto::generate_random_bytes(16, m_salt);
+    Random::randomBytes(16, m_salt);
 
     /* Make sure to do this after initializing the salt above! */
     m_hashedPassword = hashPassword(rpcPassword);
@@ -196,6 +198,9 @@ ApiDispatcher::ApiDispatcher(
             /* Get balance for a specific address */
             .Get("/balance/" + ApiConstants::addressRegex, router(&ApiDispatcher::getBalanceForAddress, walletMustBeOpen, viewWalletsAllowed))
 
+            /* Get balances for each address */
+            .Get("/balances", router(&ApiDispatcher::getBalances, walletMustBeOpen, viewWalletsAllowed))
+
     /* OPTIONS */
 
             /* Matches everything */
@@ -205,7 +210,12 @@ ApiDispatcher::ApiDispatcher(
 
 void ApiDispatcher::start()
 {
-    m_server.listen(m_host, m_port);
+    if (!m_server.listen(m_host, m_port))
+    {
+      std::cout << "Could not bind service to " << m_host << ":" << m_port 
+                << "\nIs another service using this address and port?\n";
+      exit(1);
+    }
 }
 
 void ApiDispatcher::stop()
@@ -483,10 +493,11 @@ std::tuple<Error, uint16_t> ApiDispatcher::createAddress(
     Response &res,
     const nlohmann::json &body)
 {
-    const auto [error, address] = m_walletBackend->addSubWallet();
+    const auto [error, address, privateSpendKey] = m_walletBackend->addSubWallet();
 
     nlohmann::json j {
-        {"address", address}
+        {"address", address},
+        {"privateSpendKey", privateSpendKey}
     };
 
     res.set_content(j.dump(4) + "\n", "application/json");
@@ -654,8 +665,16 @@ std::tuple<Error, uint16_t> ApiDispatcher::sendAdvancedTransaction(
         changeAddress = tryGetJsonValue<std::string>(body, "changeAddress");
     }
 
+    uint64_t unlockTime = 0;
+
+    if (body.find("unlockTime") != body.end())
+    {
+        unlockTime = tryGetJsonValue<uint64_t>(body, "unlockTime");
+    }
+
     auto [error, hash] = m_walletBackend->sendTransactionAdvanced(
-        destinations, mixin, fee, paymentID, subWalletsToTakeFrom, changeAddress
+        destinations, mixin, fee, paymentID, subWalletsToTakeFrom, changeAddress,
+        unlockTime
     );
 
     if (error)
@@ -942,7 +961,8 @@ std::tuple<Error, uint16_t> ApiDispatcher::getStatus(
         {"networkBlockCount", status.networkBlockCount},
         {"peerCount", status.peerCount},
         {"hashrate", status.lastKnownHashrate},
-        {"isViewWallet", m_walletBackend->isViewWallet()}
+        {"isViewWallet", m_walletBackend->isViewWallet()},
+        {"subWalletCount", m_walletBackend->getWalletCount()}
     };
 
     res.set_content(j.dump(4) + "\n", "application/json");
@@ -1088,7 +1108,7 @@ std::tuple<Error, uint16_t> ApiDispatcher::getTransactionsFromHeight(
 
     try
     {
-        uint64_t startHeight = std::stoi(startHeightStr);
+        uint64_t startHeight = std::stoull(startHeightStr);
 
         const auto txs = m_walletBackend->getTransactionsRange(
             startHeight, startHeight + 1000
@@ -1103,6 +1123,11 @@ std::tuple<Error, uint16_t> ApiDispatcher::getTransactionsFromHeight(
         res.set_content(j.dump(4) + "\n", "application/json");
 
         return {SUCCESS, 200};
+    }
+    catch (const std::out_of_range &)
+    {
+        std::cout << "Height parameter is too large or too small!" << std::endl;
+        return {SUCCESS, 400};
     }
     catch (const std::invalid_argument &e)
     {
@@ -1128,9 +1153,9 @@ std::tuple<Error, uint16_t> ApiDispatcher::getTransactionsFromHeightToHeight(
 
     try
     {
-        uint64_t startHeight = std::stoi(startHeightStr);
+        uint64_t startHeight = std::stoull(startHeightStr);
 
-        uint64_t endHeight = std::stoi(endHeightStr);
+        uint64_t endHeight = std::stoull(endHeightStr);
 
         if (startHeight >= endHeight)
         {
@@ -1151,6 +1176,11 @@ std::tuple<Error, uint16_t> ApiDispatcher::getTransactionsFromHeightToHeight(
         res.set_content(j.dump(4) + "\n", "application/json");
 
         return {SUCCESS, 200};
+    }
+    catch (const std::out_of_range &)
+    {
+        std::cout << "Height parameter is too large or too small!" << std::endl;
+        return {SUCCESS, 400};
     }
     catch (const std::invalid_argument &)
     {
@@ -1180,7 +1210,7 @@ std::tuple<Error, uint16_t> ApiDispatcher::getTransactionsFromHeightWithAddress(
 
     try
     {
-        uint64_t startHeight = std::stoi(startHeightStr);
+        uint64_t startHeight = std::stoull(startHeightStr);
 
         const auto txs = m_walletBackend->getTransactionsRange(
             startHeight, startHeight + 1000
@@ -1214,6 +1244,11 @@ std::tuple<Error, uint16_t> ApiDispatcher::getTransactionsFromHeightWithAddress(
         res.set_content(j.dump(4) + "\n", "application/json");
 
         return {SUCCESS, 200};
+    }
+    catch (const std::out_of_range &)
+    {
+        std::cout << "Height parameter is too large or too small!" << std::endl;
+        return {SUCCESS, 400};
     }
     catch (const std::invalid_argument &)
     {
@@ -1250,9 +1285,9 @@ std::tuple<Error, uint16_t> ApiDispatcher::getTransactionsFromHeightToHeightWith
 
     try
     {
-        uint64_t startHeight = std::stoi(startHeightStr);
+        uint64_t startHeight = std::stoull(startHeightStr);
 
-        uint64_t endHeight = std::stoi(endHeightStr);
+        uint64_t endHeight = std::stoull(endHeightStr);
 
         if (startHeight >= endHeight)
         {
@@ -1292,6 +1327,11 @@ std::tuple<Error, uint16_t> ApiDispatcher::getTransactionsFromHeightToHeightWith
         res.set_content(j.dump(4) + "\n", "application/json");
 
         return {SUCCESS, 200};
+    }
+    catch (const std::out_of_range &)
+    {
+        std::cout << "Height parameter is too large or too small!" << std::endl;
+        return {SUCCESS, 400};
     }
     catch (const std::invalid_argument &)
     {
@@ -1364,6 +1404,29 @@ std::tuple<Error, uint16_t> ApiDispatcher::getBalanceForAddress(
         {"unlocked", unlocked},
         {"locked", locked}
     };
+
+    res.set_content(j.dump(4) + "\n", "application/json");
+
+    return {SUCCESS, 200};
+}
+
+std::tuple<Error, uint16_t> ApiDispatcher::getBalances(
+    const httplib::Request &req,
+    httplib::Response &res,
+    const nlohmann::json &body) const
+{
+    const auto balances = m_walletBackend->getBalances();
+
+    nlohmann::json j;
+
+    for (const auto [address, unlocked, locked] : balances)
+    {
+        j.push_back({
+            {"address", address},
+            {"unlocked", unlocked},
+            {"locked", locked}
+        });
+    }
 
     res.set_content(j.dump(4) + "\n", "application/json");
 
@@ -1488,7 +1551,7 @@ bool ApiDispatcher::assertWalletClosed() const
 {
     if (m_walletBackend != nullptr)
     {
-        std::cout << "Client requested to open a wallet, whilst once is already open" << std::endl;
+        std::cout << "Client requested to open a wallet, whilst one is already open" << std::endl;
         return false;
     }
 
