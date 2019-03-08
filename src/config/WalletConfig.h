@@ -75,5 +75,5 @@ namespace WalletConfig
 
     /* Should we process coinbase transactions? We can skip them to speed up
        syncing, as most people don't have solo mined transactions */
-    const bool processCoinbaseTransactions = false;
+    const bool processCoinbaseTransactions = true;
 }
