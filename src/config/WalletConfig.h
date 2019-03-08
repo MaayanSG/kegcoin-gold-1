@@ -23,7 +23,7 @@ namespace WalletConfig
     const std::string addressBookFilename = ".addressBook.json";
 
     /* The name of your deamon */
-    const std::string daemonName = "Kegcoin-goldd";
+    const std::string daemonName = "Kegcoind";
 
     /* The name to call this wallet */
     const std::string walletName = "zedwallet";
