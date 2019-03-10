@@ -23,7 +23,7 @@ namespace WalletConfig
     const std::string addressBookFilename = ".addressBook.json";
 
     /* The name of your deamon */
-    const std::string daemonName = "Kegcoin-goldd";
+    const std::string daemonName = "Kegcoind";
 
     /* The name to call this wallet */
     const std::string walletName = "zedwallet";
@@ -75,5 +75,5 @@ namespace WalletConfig
 
     /* Should we process coinbase transactions? We can skip them to speed up
        syncing, as most people don't have solo mined transactions */
-    const bool processCoinbaseTransactions = false;
+    const bool processCoinbaseTransactions = true;
 }
