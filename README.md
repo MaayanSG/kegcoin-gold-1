@@ -142,9 +142,7 @@ The binaries will be in the `src` folder when you are complete.
 #### Windows
 
 ##### Prerequisites
-
-You can build for 32-bit or 64-bit Windows. **If you're not sure, pick 64-bit.**
-
+- You will need to install [cmake](https://cmake.org/download) (3.8 or higher)
 - Install [Visual Studio 2017 Community Edition](https://www.visualstudio.com/thank-you-downloading-visual-studio/?sku=Community&rel=15&page=inlineinstall)
 - When installing Visual Studio, it is **required** that you install **Desktop development with C++**
 - Install the latest version of Boost (currently Boost 1.68). Select the appropriate version for your system:
