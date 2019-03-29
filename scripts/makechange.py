@@ -14,15 +14,15 @@ $ python3.6 makechange.py
 Make two wallets and fill one or both with some funds, or start mining to it.
 Open the wallets with turtle-serivce like so:
 
-./turtle-service -w walletA.wallet -p yourpass --rpc-password test --bind-port 8070
-./turtle-service -w walletB.wallet -p yourpass --rpc-password test --bind-port 8071
+./kegcoin-service -w walletA.wallet -p yourpass --rpc-password test --bind-port 5000
+./kegcoin-service -w walletB.wallet -p yourpass --rpc-password test --bind-port 5001
 
 Feel free to change these parameters if needed of course.
 
 This script rapidly sends random amount of funds from two wallets to each
 other, hopefully generating change on a new network.
 
-For Forks, see comments for adjusting amounts especially if using more than 2 decimals.
+For Forks, see comments for adjusting amounts especially if using more than 5 decimals.
 '''
 
 import requests
@@ -33,11 +33,11 @@ import sys
 from threading import Thread
 
 # Forks adjust as needed
-moveDecimal = 100  # TRTL has 2 decimals so 100 is the divide/multiply factor
-minAmount = 100 * moveDecimal  # min number for amount to xfer
-maxAmount = 5000 * moveDecimal  # max number for amount to xfer
-anonymity = 3
-fee = 10 # atomic units, TRTL would be 0.10 as the tx network fee
+moveDecimal = 100000  # KEG has 5 decimals so 100000 is the divide/multiply factor
+minAmount = 100000 * moveDecimal  # min number for amount to xfer
+maxAmount = 5000000 * moveDecimal  # max number for amount to xfer
+anonymity = 1
+fee = 10 # atomic units, KEG would be 0.001 as the tx network fee
 
 def getAddress(host, port, rpcPassword):
     payload = {
