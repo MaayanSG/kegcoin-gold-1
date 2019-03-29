@@ -91,7 +91,7 @@ std::optional<Crypto::Hash> BlockchainMonitor::requestLastBlockHash()
 
     if (!res)
     {
-        std::cout << WarningMsg("Failed to get block hash - Is your daemon open?\n");
+        std::cout << WarningMsg("Failed to get block hash - Is kegcoind open and synced? \n");
 
         return std::nullopt;
     }
