@@ -156,9 +156,9 @@ bool Currency::getBlockReward(uint8_t blockMajorVersion, size_t medianSize, size
   if (alreadyGeneratedCoins == 0 && m_genesisBlockReward != 0) {
     baseReward = m_genesisBlockReward;
   }
-  if (alreadyGeneratedCoins => m_moneySupply) {
-    baseReward = 25; //tail emission
-  }
+  //if (alreadyGeneratedCoins => //m_moneySupply) {
+    //baseReward = 25; //tail emission
+  // }*/
 
   size_t blockGrantedFullRewardZone = blockGrantedFullRewardZoneByBlockVersion(blockMajorVersion);
   medianSize = std::max(medianSize, blockGrantedFullRewardZone);
