@@ -5,10 +5,10 @@
 #pragma once
 
 const std::string windowsAsciiArt =
-      "";
+      "KEGCOIN GOLD";
 
 const std::string nonWindowsAsciiArt = 
-      "";
+      "KEGCOIN GOLD";
 
 /* Windows has some characters it won't display in a terminal. If your ascii
    art works fine on Windows and Linux terminals, just replace 'asciiArt' with
