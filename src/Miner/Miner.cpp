@@ -69,7 +69,7 @@ void Miner::stop()
 
 void Miner::runWorkers(BlockMiningParameters blockMiningParameters, size_t threadCount)
 {
-    std::cout << InformationMsg("Started mining for difficulty of ")
+    std::cout << InformationMsg("Started mining at difficulty of ")
               << InformationMsg(blockMiningParameters.difficulty)
               << InformationMsg(". Good luck! ;)\n");
 
@@ -90,7 +90,7 @@ void Miner::runWorkers(BlockMiningParameters blockMiningParameters, size_t threa
     }
     catch (const std::exception& e)
     {
-        std::cout << WarningMsg("Error occured whilst mining: ")
+        std::cout << WarningMsg("Error occured while mining: ")
                   << WarningMsg(e.what()) << std::endl;
 
         m_state = MiningState::MINING_STOPPED;
@@ -127,7 +127,7 @@ void Miner::workerFunc(const BlockTemplate& blockTemplate, uint64_t difficulty, 
     }
     catch (const std::exception &e)
     {
-        std::cout << WarningMsg("Error occured whilst mining: ")
+        std::cout << WarningMsg("Error occured while mining: ")
                   << WarningMsg(e.what()) << std::endl;
 
         m_state = MiningState::MINING_STOPPED;
