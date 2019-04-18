@@ -145,7 +145,7 @@ The binaries will be in the `src` folder when you are complete.
 - You will need to install [cmake](https://cmake.org/download) (3.8 or higher)
 - Install [Visual Studio 2017 Community Edition](https://www.visualstudio.com/thank-you-downloading-visual-studio/?sku=Community&rel=15&page=inlineinstall)
 - When installing Visual Studio, it is **required** that you install **Desktop development with C++**
-- Install the latest version of [Boost](https://bintray.com/boostorg/release/download_file?file_path=1.68.0%2Fbinaries%2Fboost_1_68_0-msvc-14.1-64.exe) - Currently Boost 1.68.
+- Install the latest version of [Boost](https://bintray.com/boostorg/release/download_file?file_path=1.70.0%2Fbinaries%2Fboost_1_68_0-msvc-14.1-64.exe) - Currently Boost 1.70.
 
 ##### Building
 
