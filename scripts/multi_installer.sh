@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-# Turtlecoin Multi-installer
-# a one line clone-and-compile for turtlecoin:
+# kegcoin Multi-installer
+# a one line clone-and-compile for kegcoin:
 #
-#     ` $ curl -sL "https://raw.githubusercontent.com/turtlecoin/turtlecoin/master/scripts/multi_installer.sh" | bash
+#     ` $ curl -sL "https://raw.githubusercontent.com/kegcoin-project/kegcoin-gold/master/scripts/multi_installer.sh" | bash
 #
 # Supports Ubuntu 16.04 LTS, OSX 10.10+
 # Supports building project from current directory (automatic detection)
@@ -31,7 +31,7 @@ _note() {
 _fail() {
     local msg=`echo \'$1\'`
     _colorize red "Failure: $msg" | tee -a build.log && echo
-    _colorize red "Please check build.log and if you need help check out the team discord @ 'https://discordapp.com/invite/NZ7QYJA'" && echo
+    _colorize red "Please check build.log and if you need help check out the team discord @ 'chat.kegcoin.tk'" && echo
     _colorize purple "Exiting script" && echo
     exit 1
 }
@@ -41,26 +41,26 @@ _set_wd() {
         _note "Building project from current working directory ($PWD)"
     else
         _note "Cloning project with git..."
-        if [ -d "$PWD"/turtlecoin ]; then
-            read -r -p "${1:-turtlecoin directory already exists. Overwrite? [y/N]} " response
+        if [ -d "$PWD"/kegcoin-gold ]; then
+            read -r -p "${1:-kegcoin directory already exists. Overwrite? [y/N]} " response
             case "$response" in
                 [yY][eE][sS|[yY])
-                    _colorize red "Overwriting old turtlecoin directory" && echo
+                    _colorize red "Overwriting old kegcoin directory" && echo
                     rm -rf "$PWD"/turtlecoin
                     ;;
                 *)
-                    _fail "turtlecoin directory already exists. Aborting..."
+                    _fail "kegcoin directory already exists. Aborting..."
                     ;;
             esac
         fi
-        mkdir turtlecoin
-        git clone -b master -q https://github.com/turtlecoin/turtlecoin turtlecoin   >>build.log 2>&1 || _fail "Unable to clone git repository. Please see build.log for more information"
-        cd turtlecoin
+        mkdir kegcoin
+        git clone  https://github.com/kegcoin-project/kegcoin-gold kegcoin-gold   >>build.log 2>&1 || _fail "Unable to clone git repository. Please see build.log for more information"
+        cd kegcoin-gold
     fi
 }
 
-_build_turtlecoin() {
-    _note "Building turtlecoin from source (this might take a while)..."
+_build_kegcoin() {
+    _note "Building kegcoin from source (this might take a while)..."
     if [ -d build ]; then
         _colorize red "Overwriting old build directory" && echo
         rm -rf build
@@ -109,7 +109,7 @@ _configure_linux() {
     elif [ "$(awk -F= '/^NAME/{print $2}' /etc/os-release)" = "\"Debian GNU/Linux\"" ]; then
         _configure_debian
     else
-        _fail "Your OS version isn't supported by this installer. Please consider adding support for your OS to the project ('https://github.com/turtlecoin')"
+        _fail "Your OS version isn't supported by this installer. Please consider adding support for your OS to the project ('https://github.com/kegcoin-project')"
     fi
 }
 
@@ -144,13 +144,13 @@ _configure_os() {
     _note "Operating system configuration completed. You're halfway there!"
 }
 
-_note "Turtlecoin Multi_Installer v1.0 (pepperoni)"
+_note "kegcoin Multi_Installer v1.0 (pepperoni)"
 _colorize green " _______         _   _       _____      _       \n|__   __|       | | | |     / ____|    (_)      \n   | |_   _ _ __| |_| | ___| |     ___  _ _ __  \n   | | | | | '__| __| |/ _ \ |    / _ \| | '_ \ \n   | | |_| | |  | |_| |  __/ |___| (_) | | | | |\n   |_|\__,_|_|   \__|_|\___|\_____\___/|_|_| |_|\n" && echo
 
 _configure_os
 
 _set_wd
-_build_turtlecoin
+_build_kegcoin
 
 _note "Installation complete!"
-_note "Look in 'turtlecoin/build/src/' for the executible binaries. See 'https://github.com/turtlecoin/turtlecoin' for more project support. Cowabunga!"
+_note "Look in 'kegcoin-gold/build/src/' for the executible binaries. See 'https://github.com/kegcoin/kegcoin-project' for more project support!"

@@ -4,10 +4,10 @@
 host=127.0.0.1
  
 # The port your rpc is running on
-port=31898
+port=4057
  
 # If you only triggered the diff algo at a certain point
-startHeight=1
+startHeight=0
  
 # Get the current block height
 height=$(curl --silent -X POST -H "Accept:application/json" -d '{"jsonrpc":"2.0", "id":"test", "method":"getblockcount", "params":{}}' $host:$port/json_rpc | jq ".result.count")

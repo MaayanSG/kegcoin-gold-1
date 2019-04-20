@@ -26,7 +26,7 @@
 #define CN_DARK_SCRATCHPAD              524288
 #define CN_DARK_ITERATIONS              262144
 
-// Standard CryptoNight Turtle
+// Standard CryptoNight turtle (not gonna use keg)
 #define CN_TURTLE_PAGE_SIZE             262144
 #define CN_TURTLE_SCRATCHPAD            262144
 #define CN_TURTLE_ITERATIONS            131072
