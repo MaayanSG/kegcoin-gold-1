@@ -1,4 +1,4 @@
-# kegcoin gold
+# Kegcoin Gold
 Kegcoin-gold is a ASIC resistant altcoin made with value and cheap transactions in mind, it has a block time of 30 ecconds and low fees
 
 
