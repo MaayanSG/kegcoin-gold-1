@@ -1,6 +1,13 @@
 # Kegcoin Gold
+
 Kegcoin-gold is a ASIC resistant altcoin made with value and cheap transactions in mind, it has a block time of 30 ecconds and low fees
 
+| **General** | **Master build status** | **Development build status** |
+|-------------|-------------------------|------------------------------|
+| ![GitHub repo size](https://img.shields.io/github/repo-size/kegcoin-project/kegcoin-gold.svg?label=Repository%20size%3A&style=popout-square) | [![Travis master branch](https://img.shields.io/travis/kegcoin-project/kegcoin-gold/master.svg?label=TravisCI&style=popout-square)](https://travis-ci.org/kegcoin-project/kegcoin-gold) | [![Travis development branch](https://img.shields.io/travis/kegcoin-project/kegcoin-gold/development.svg?label=TravisCI&style=popout-square)](https://travis-ci.org/kegcoin-project/kegcoin-gold) |
+| [![GitHub issues](https://img.shields.io/github/issues-raw/kegcoin-project/kegcoin-gold.svg?label=Issues%20that%20need%20help%3A&style=popout-square)](https://github.com/kegcoin-project/kegcoin-gold/issues) | [![AppVeyor master branch](https://img.shields.io/appveyor/ci/TheDevMinerTV/kegcoin-gold/master.svg?label=AppVeyor&style=popout-square)](https://ci.appveyor.com/project/TheDevMinerTV/kegcoin-gold) | [![AppVeyor development branch](https://img.shields.io/appveyor/ci/TheDevMinerTV/kegcoin-gold/development.svg?label=AppVeyor&style=popout-square)](https://ci.appveyor.com/project/TheDevMinerTV/kegcoin-gold) |
+| [![GitHub Releases](https://img.shields.io/github/downloads/kegcoin-project/kegcoin-gold/total.svg?style=flat-square)](https://github.com/kegcoin-project/kegcoin-gold/releases) | | |
+| [![Discord](https://img.shields.io/discord/546368529579114517.svg?label=Discord&style=popout-square)](https://discord.gg/94UVpyr) | | |
 
 ### How To Compile
 
