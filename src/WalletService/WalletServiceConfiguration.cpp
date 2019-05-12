@@ -40,7 +40,8 @@ namespace PaymentService {
       ("l,log-file", "Specify log <file> location", cxxopts::value<std::string>()->default_value(config.logFile), "<file>")
       ("log-level", "Specify log level", cxxopts::value<int>()->default_value(std::to_string(config.logLevel)), "#")
       ("server-root", "The service will use this <path> as the working directory", cxxopts::value<std::string>(), "<path>")
-      ("save-config", "Save the configuration to the specified <file>", cxxopts::value<std::string>(), "<file>");
+      ("save-config", "Save the configuration to the specified <file>", cxxopts::value<std::string>(), "<file>")
+      ("init-timeout", "Amount of time in seconds to wait for initial connection", cxxopts::value<int>()->default_value("10"), "<seconds>");
 
     options.add_options("Wallet")
       ("address", "Print the wallet addresses and then exit", cxxopts::value<bool>()->default_value("false")->implicit_value("true"))
@@ -114,7 +115,6 @@ namespace PaymentService {
       {
         config.initTimeout = cli["init-timeout"].as<int>();
       }
-
 
       if (cli.count("log-file") > 0)
       {

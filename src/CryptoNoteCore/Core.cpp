@@ -866,6 +866,18 @@ std::string Core::getPaymentIDFromExtra(const std::vector<uint8_t> &extra)
     return std::string();
 }
 
+std::optional<BinaryArray> Core::getTransaction(const Crypto::Hash& hash) const {
+    throwIfNotInitialized();
+    auto segment = findSegmentContainingTransaction(hash);
+    if(segment != nullptr) {
+        return segment->getRawTransactions({hash})[0];
+    } else if(transactionPool->checkIfTransactionPresent(hash)) {
+        return transactionPool->getTransaction(hash).getTransactionBinaryArray();
+    } else {
+        return std::nullopt;
+    }
+}
+
 void Core::getTransactions(const std::vector<Crypto::Hash>& transactionHashes, std::vector<BinaryArray>& transactions,
                            std::vector<Crypto::Hash>& missedHashes) const {
   assert(!chainsLeaves.empty());
@@ -1430,7 +1442,7 @@ bool Core::getGlobalIndexesForRange(
                 getBinaryArrayHash(toBinaryArray(block.baseTransaction))
             );
         }
-        
+
         indexes = mainChain->getGlobalIndexes(transactionHashes);
 
         return true;
@@ -1485,6 +1497,15 @@ bool Core::isTransactionValidForPool(const CachedTransaction& cachedTransaction,
 
   if (!success)
   {
+      return false;
+  }
+
+  if (cachedTransaction.getTransaction().extra.size() >= CryptoNote::parameters::MAX_EXTRA_SIZE_V2)
+  {
+      logger(Logging::TRACE) << "Not adding transaction "
+                             << cachedTransaction.getTransactionHash()
+                             << " to pool, extra too large.";
+
       return false;
   }
 
@@ -1662,7 +1683,7 @@ bool Core::getBlockTemplate(BlockTemplate& b, const AccountPublicAddress& adr, c
 
   size_t transactionsSize;
   uint64_t fee;
-  fillBlockTemplate(b, medianSize, currency.maxBlockCumulativeSize(height), transactionsSize, fee);
+  fillBlockTemplate(b, medianSize, currency.maxBlockCumulativeSize(height), height, transactionsSize, fee);
 
   /*
      two-phase miner transaction generation: we don't know exact block size until we prepare block, but we don't know
@@ -1835,6 +1856,12 @@ auto error = validateSemantic(transaction, fee, blockIndex);
           return error::TransactionValidationError::INPUT_SPEND_LOCKED_OUT;
         }
 
+        if (blockIndex >= CryptoNote::parameters::TRANSACTION_SIGNATURE_COUNT_VALIDATION_HEIGHT
+            && outputKeys.size() != cachedTransaction.getTransaction().signatures[inputIndex].size())
+        {
+          return error::TransactionValidationError::INPUT_INVALID_SIGNATURES_COUNT;
+        }
+
         if (!Crypto::crypto_ops::checkRingSignature(cachedTransaction.getTransactionPrefixHash(), in.keyImage, outputKeys, transaction.signatures[inputIndex])) {
           return error::TransactionValidationError::INPUT_INVALID_SIGNATURES;
         }
@@ -1854,6 +1881,16 @@ auto error = validateSemantic(transaction, fee, blockIndex);
 std::error_code Core::validateSemantic(const Transaction& transaction, uint64_t& fee, uint32_t blockIndex) {
   if (transaction.inputs.empty()) {
     return error::TransactionValidationError::EMPTY_INPUTS;
+  }
+
+  /* Small buffer until enforcing - helps clear out tx pool with old, previously
+     valid transactions */
+  if (blockIndex >= CryptoNote::parameters::MAX_EXTRA_SIZE_V2_HEIGHT + CryptoNote::parameters::CRYPTONOTE_MINED_MONEY_UNLOCK_WINDOW)
+  {
+      if (transaction.extra.size() >= CryptoNote::parameters::MAX_EXTRA_SIZE_V2)
+      {
+          return error::TransactionValidationError::EXTRA_TOO_LARGE;
+      }
   }
 
   uint64_t summaryOutputAmount = 0;
@@ -2001,6 +2038,12 @@ std::error_code Core::validateBlock(const CachedBlock& cachedBlock, IBlockchainC
 
   if (!(block.baseTransaction.unlockTime == previousBlockIndex + 1 + currency.minedMoneyUnlockWindow())) {
     return error::TransactionValidationError::WRONG_TRANSACTION_UNLOCK_TIME;
+  }
+
+  if (cachedBlock.getBlockIndex() >= CryptoNote::parameters::TRANSACTION_SIGNATURE_COUNT_VALIDATION_HEIGHT
+      && !block.baseTransaction.signatures.empty())
+  {
+    return error::TransactionValidationError::BASE_INVALID_SIGNATURES_COUNT;
   }
 
   for (const auto& output : block.baseTransaction.outputs) {
@@ -2478,7 +2521,6 @@ void Core::fillBlockTemplate(
           return false;
       }
 
-
       /* Make sure that we have not already spent funds in this same block via
          another transaction that we've already included in this block template */
       if (!spentInputsChecker.haveSpentInputs(transaction.getTransaction()))
@@ -2808,7 +2850,7 @@ TransactionDetails Core::getTransactionDetails(const Crypto::Hash& transactionHa
     } else if (transaction->getInputType(i) == TransactionTypes::InputType::Key) {
       KeyInputDetails txInToKeyDetails;
       txInToKeyDetails.input = boost::get<KeyInput>(rawTransaction.inputs[i]);
-      std::vector<std::pair<Crypto::Hash, size_t> outputReferences;
+      std::vector<std::pair<Crypto::Hash, size_t>> outputReferences;
       outputReferences.reserve(txInToKeyDetails.input.outputIndexes.size());
       std::vector<uint32_t> globalIndexes = relativeOutputOffsetsToAbsolute(txInToKeyDetails.input.outputIndexes);
       ExtractOutputKeysResult result = segment->extractKeyOtputReferences(txInToKeyDetails.input.amount, { globalIndexes.data(), globalIndexes.size() }, outputReferences);

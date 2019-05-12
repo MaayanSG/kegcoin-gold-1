@@ -17,7 +17,7 @@ namespace CryptoNote
     programHeader << std::endl
       << asciiArt << std::endl
       << " " << CryptoNote::CRYPTONOTE_NAME << " v" << PROJECT_VERSION_LONG << std::endl
-      << " This software is created by the Kegcoin Developers and is distributed under the General Public License v3.0"
+      << " This software is created by the Kegcoin Developers (Leo Cornelius) and is distributed under the General Public License v3.0"
       << std::endl << std::endl
       << " " << PROJECT_COPYRIGHT
       << std::endl << std::endl

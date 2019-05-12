@@ -31,6 +31,8 @@
 
 #include "JsonHelper.h"
 
+#include <Logger/Logger.h>
+
 #include <Mnemonics/Mnemonics.h>
 
 #include "rapidjson/writer.h"
@@ -213,6 +215,11 @@ std::tuple<Error, std::shared_ptr<WalletBackend>> WalletBackend::importWalletFro
         privateSpendKey, privateViewKey
     );
 
+    if (Error error = validatePrivateKey(privateViewKey); error != SUCCESS)
+    {
+        return {error, nullptr};
+    }
+
     /* Just defining here so it's more obvious what we're doing in the
        constructor */
     bool newWallet = false;
@@ -248,6 +255,16 @@ std::tuple<Error, std::shared_ptr<WalletBackend>> WalletBackend::importWalletFro
         return {error, nullptr};
     }
 
+    if (Error error = validatePrivateKey(privateViewKey); error != SUCCESS)
+    {
+        return {error, nullptr};
+    }
+
+    if (Error error = validatePrivateKey(privateSpendKey); error != SUCCESS)
+    {
+        return {error, nullptr};
+    }
+
     /* Just defining here so it's more obvious what we're doing in the
        constructor */
     bool newWallet = false;
@@ -279,6 +296,18 @@ std::tuple<Error, std::shared_ptr<WalletBackend>> WalletBackend::importViewWalle
 {
     /* Check the filename is valid */
     if (Error error = checkNewWalletFilename(filename); error != SUCCESS)
+    {
+        return {error, nullptr};
+    }
+
+    if (Error error = validatePrivateKey(privateViewKey); error != SUCCESS)
+    {
+        return {error, nullptr};
+    }
+
+    const bool allowIntegratedAddresses = false;
+
+    if (Error error = validateAddresses({address}, allowIntegratedAddresses); error != SUCCESS)
     {
         return {error, nullptr};
     }
@@ -468,6 +497,12 @@ std::tuple<Error, std::shared_ptr<WalletBackend>> WalletBackend::openWallet(
     }
     catch (const std::invalid_argument &e)
     {
+        Logger::logger.log(
+            std::string("Failed to open wallet file: ") + e.what(),
+            Logger::FATAL,
+            {Logger::FILESYSTEM, Logger::SAVE}
+        );
+
         return {WALLET_FILE_CORRUPTED, nullptr};
     }
 }
@@ -573,6 +608,12 @@ Error WalletBackend::unsafeSave() const
 
     if (!file)
     {
+        Logger::logger.log(
+            std::string("Wallet filename: ") + m_filename + " is invalid",
+            Logger::FATAL,
+            {Logger::FILESYSTEM, Logger::SAVE}
+        );
+
         return INVALID_WALLET_FILENAME;
     }
 
@@ -716,6 +757,11 @@ std::tuple<Error, std::string> WalletBackend::importSubWallet(
     const Crypto::SecretKey privateSpendKey,
     const uint64_t scanHeight)
 {
+    if (Error error = validatePrivateKey(privateSpendKey); error != SUCCESS)
+    {
+        return {error, std::string()};
+    }
+
     return m_syncRAIIWrapper->pauseSynchronizerToRunFunction([&, this]() {
         /* Add the sub wallet */
         const auto [error, address] = m_subWallets->importSubWallet(
@@ -747,6 +793,11 @@ std::tuple<Error, std::string> WalletBackend::importViewSubWallet(
     const Crypto::PublicKey publicSpendKey,
     const uint64_t scanHeight)
 {
+    if (Error error = validatePublicKey(publicSpendKey); error != SUCCESS)
+    {
+        return {error, std::string()};
+    }
+
     return m_syncRAIIWrapper->pauseSynchronizerToRunFunction([&, this]() {
         /* Add the sub wallet */
         const auto [error, address] = m_subWallets->importViewSubWallet(
@@ -776,6 +827,13 @@ std::tuple<Error, std::string> WalletBackend::importViewSubWallet(
 
 Error WalletBackend::deleteSubWallet(const std::string address)
 {
+    const bool allowIntegratedAddresses = false;
+
+    if (Error error = validateAddresses({address}, allowIntegratedAddresses); error != SUCCESS)
+    {
+        return error;
+    }
+
     return m_syncRAIIWrapper->pauseSynchronizerToRunFunction([&, this]() {
         return m_subWallets->deleteSubWallet(address);
     });
@@ -842,6 +900,13 @@ Error WalletBackend::changePassword(const std::string newPassword)
 std::tuple<Error, Crypto::PublicKey, Crypto::SecretKey>
     WalletBackend::getSpendKeys(const std::string &address) const
 {
+    const bool allowIntegratedAddresses = false;
+
+    if (Error error = validateAddresses({address}, allowIntegratedAddresses); error != SUCCESS)
+    {
+        return {error, Crypto::PublicKey(), Crypto::SecretKey()};
+    }
+
     const auto [publicSpendKey, publicViewKey] = Utilities::addressToKeys(address);
 
     const auto [success, privateSpendKey] = m_subWallets->getPrivateSpendKey(publicSpendKey);
@@ -868,6 +933,13 @@ std::tuple<Error, std::string> WalletBackend::getMnemonicSeed() const
 std::tuple<Error, std::string> WalletBackend::getMnemonicSeedForAddress(
     const std::string &address) const
 {
+    const bool allowIntegratedAddresses = false;
+
+    if (Error error = validateAddresses({address}, allowIntegratedAddresses); error != SUCCESS)
+    {
+        return {error, std::string()}; 
+    }
+
     const auto privateViewKey = getPrivateViewKey();
     const auto [error, publicSpendKey, privateSpendKey] = getSpendKeys(address);
 
@@ -969,6 +1041,11 @@ bool WalletBackend::daemonOnline() const
 std::tuple<Error, std::string> WalletBackend::getAddress(
     const Crypto::PublicKey spendKey) const
 {
+    if (Error error = validatePublicKey(spendKey); error != SUCCESS)
+    {
+        return {error, std::string()};
+    }
+
     return m_subWallets->getAddress(spendKey);
 }
 
