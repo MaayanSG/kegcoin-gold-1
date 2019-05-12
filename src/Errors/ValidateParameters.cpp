@@ -179,34 +179,6 @@ Error validatePaymentID(const std::string paymentID)
     return SUCCESS;
 }
 
-Error validatePrivateKey(const Crypto::SecretKey &privateViewKey)
-{
-    const bool valid = sc_check(reinterpret_cast<const unsigned char *>(&privateViewKey)) == 0;
-
-    if (valid)
-    {
-        return SUCCESS;
-    }
-    else
-    {
-        return INVALID_PRIVATE_KEY;
-    }
-}
-
-Error validatePublicKey(const Crypto::PublicKey &publicKey)
-{
-    const bool valid = Crypto::check_key(publicKey);
-
-    if (valid)
-    {
-        return SUCCESS;
-    }
-    else
-    {
-        return INVALID_PUBLIC_KEY;
-    }
-}
-
 Error validateMixin(const uint64_t mixin, const uint64_t height)
 {
     const auto [minMixin, maxMixin, defaultMixin] = Utilities::getMixinAllowableRange(height);

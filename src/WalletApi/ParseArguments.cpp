@@ -22,13 +22,10 @@ Config parseArguments(int argc, char **argv)
 
     bool help, version;
 
-    int logLevel;
-
     options.add_options("Core")
         ("h,help", "Display this help message", cxxopts::value<bool>(help)->implicit_value("true"))
 
-        ("v,version", "Output software version information", cxxopts::value<bool>(version)->default_value("false")->implicit_value("true"))
-        ("log-level", "Specify log level", cxxopts::value<int>(logLevel)->default_value(std::to_string(config.logLevel)), "#");
+        ("v,version", "Output software version information", cxxopts::value<bool>(version)->default_value("false")->implicit_value("true"));
 
     options.add_options("Network")
         ("p,port", "The port to listen on for http requests",
@@ -71,16 +68,6 @@ Config parseArguments(int argc, char **argv)
     {
         std::cout << CryptoNote::getProjectCLIHeader() << std::endl;
         exit(0);
-    }
-
-    if (logLevel < Logger::DISABLED || logLevel > Logger::DEBUG)
-    {
-        std::cout << "Log level must be between " << Logger::DISABLED << " and " << Logger::DEBUG << "!" << std::endl;
-        exit(1);
-    }
-    else
-    {
-        config.logLevel = static_cast<Logger::LogLevel>(logLevel);
     }
 
     return config;

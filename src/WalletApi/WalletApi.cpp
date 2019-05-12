@@ -4,17 +4,14 @@
 
 #include <atomic>
 
-#include <chrono>
-
 #include <Common/SignalHandler.h>
 
 #include <config/CliHeader.h>
 
 #include <iostream>
 
-#include <Logger/Logger.h>
-
 #include <thread>
+#include <chrono>
 
 #include <WalletApi/ApiDispatcher.h>
 #include <WalletApi/ParseArguments.h>
@@ -22,8 +19,6 @@
 int main(int argc, char **argv)
 {
     Config config = parseArguments(argc, argv);
-
-    Logger::logger.setLogLevel(config.logLevel);
 
     std::cout << CryptoNote::getProjectCLIHeader() << std::endl;
 

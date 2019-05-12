@@ -6,8 +6,6 @@
 
 #include <config/CryptoNoteConfig.h>
 
-#include <Logger/Logger.h>
-
 struct Config
 {
     /* Was the wallet file specified on CLI */
