@@ -11,7 +11,7 @@
 #include "../Common/Base58.h"
 #include "../Common/int-util.h"
 #include "../Common/StringTools.h"
-#include <math>
+#include <math.h>
 #include "Account.h"
 #include "CheckDifficulty.h"
 #include "CryptoNoteBasicImpl.h"
