@@ -66,6 +66,10 @@ enum {
 void cn_fast_hash(const void *data, size_t length, char *hash);
 void cn_slow_hash(const void *data, size_t length, char *hash, int light, int variant, int prehashed, uint32_t page_size, uint32_t scratchpad, uint32_t iterations);
 
+void dataset_from_height(uint32_t height, uint64_t* dataset);
+void keghash_light_api(const void* data, uint32_t length, uint8_t* hash_out, uint32_t height);
+void keghash_full_api(const void* data, uint32_t length, uint8_t* hash_out, uint64_t* dataset);
+
 void hash_extra_blake(const void *data, size_t length, char *hash);
 void hash_extra_groestl(const void *data, size_t length, char *hash);
 void hash_extra_jh(const void *data, size_t length, char *hash);
