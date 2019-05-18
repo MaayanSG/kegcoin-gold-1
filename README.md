@@ -1,6 +1,6 @@
 # Kegcoin Gold
 
-Kegcoin-gold is a ASIC resistant altcoin made with value and cheap transactions in mind, it has a block time of 30 secconds and low fees. It uses itw own algo called keghash
+Kegcoin Gold is a ASIC resistant altcoin made with value and cheap transactions in mind, it has a block time of 30 seconds and low fees. It uses it's own algorithm called [keghash](https://github.com/LeoCornelius/keghash).
 
 | **General** | **Master build status** | **Development build status** |
 |-------------|-------------------------|------------------------------|
