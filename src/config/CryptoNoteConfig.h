@@ -41,8 +41,10 @@ const uint8_t  ZAWY_DIFFICULTY_DIFFICULTY_BLOCK_VERSION      = 3;
 const uint64_t LWMA_2_DIFFICULTY_BLOCK_INDEX                 = 620000;
 const uint64_t LWMA_2_DIFFICULTY_BLOCK_INDEX_V2              = 700000;
 const uint64_t LWMA_2_DIFFICULTY_BLOCK_INDEX_V3              = 800000;
+  
 
 const uint64_t LWMA_3_DIFFICULTY_BLOCK_INDEX                 = 2000000;
+const uint64_t DIFFICULTY_CHANGE_BLOCK_INDEX                 = 220700;
 
 const unsigned EMISSION_SPEED_FACTOR                         = 22;
 static_assert(EMISSION_SPEED_FACTOR <= 8 * sizeof(uint64_t), "Bad EMISSION_SPEED_FACTOR");
@@ -172,7 +174,7 @@ const uint32_t UPGRADE_HEIGHT_V3                             = 2;
 const uint32_t UPGRADE_HEIGHT_V4                             = 300; // Upgrade height for CN-Lite Variant 1 switch.
 const uint32_t UPGRADE_HEIGHT_V5                             = 145000; // Upgrade height for CN-trtl Variant 2 switch.
 const uint32_t UPGRADE_HEIGHT_V6                             = 220700; // Upgrade hight for Keghash Lite varient 0 switch.
-const uint32_t UPGRADE_HEIGHT_CURRENT                        = UPGRADE_HEIGHT_V5;
+const uint32_t UPGRADE_HEIGHT_CURRENT                        = UPGRADE_HEIGHT_V6;
 
 const unsigned UPGRADE_VOTING_THRESHOLD                      = 90;               // percent
 const uint32_t UPGRADE_VOTING_WINDOW                         = EXPECTED_NUMBER_OF_BLOCKS_PER_DAY;  // blocks
