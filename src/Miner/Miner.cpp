@@ -18,7 +18,6 @@
 #include "CryptoNoteCore/CachedBlock.h"
 #include <Common/Varint.h>
 #include <config/CryptoNoteConfig.h>
-#include "CryptoNoteCore/CryptoNoteTools.h"
 #include "CryptoNoteCore/CheckDifficulty.h"
 #include "CryptoNoteCore/CryptoNoteFormatUtils.h"
 
