@@ -33,11 +33,7 @@ namespace WalletConfig
     const std::string walletdName = "kegcoin-service"; //(walletd)
 
     /* The full name of your crypto */
-     if (CryptoNote::CRYPTONOTE_NAME == "KegcoinGold") { // If main net (not a new coin forked from kegcoin gold)
-        const std::string coinName = std::string("Kegcoin Gold"); 
-    }else { // if a  new coin forked from kegcoin gold
         const std::string coinName = std::string(CryptoNote::CRYPTONOTE_NAME); 
-    }
 
     /* Where can your users contact you for support? E.g. discord */
     const std::string contactLink = "https://discord.gg/DzQMNJ7";
