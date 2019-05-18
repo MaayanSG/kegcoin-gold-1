@@ -33,7 +33,11 @@ namespace WalletConfig
     const std::string walletdName = "kegcoin-service"; //(walletd)
 
     /* The full name of your crypto */
-    const std::string coinName = std::string(CryptoNote::CRYPTONOTE_NAME);
+     if (CryptoNote::CRYPTONOTE_NAME == "KegcoinGold") { // If main net (not a new coin forked from kegcoin gold)
+        const std::string coinName = std::string("Kegcoin Gold"); 
+    }else { // if a  new coin forked from kegcoin gold
+        const std::string coinName = std::string(CryptoNote::CRYPTONOTE_NAME); 
+    }
 
     /* Where can your users contact you for support? E.g. discord */
     const std::string contactLink = "https://discord.gg/DzQMNJ7";
@@ -75,5 +79,5 @@ namespace WalletConfig
 
     /* Should we process coinbase transactions? We can skip them to speed up
        syncing, as most people don't have solo mined transactions */
-    const bool processCoinbaseTransactions = true;
+    const bool processCoinbaseTransactions = true; // Defiantly if using keghash (no pool or pool miner ready yet)
 }
