@@ -13,8 +13,12 @@
 #include "Common/StringTools.h"
 
 #include "crypto/crypto.h"
+#include "crypto/hash.h"
 #include <crypto/random.h>
 #include "CryptoNoteCore/CachedBlock.h"
+#include <Common/Varint.h>
+#include <config/CryptoNoteConfig.h>
+#include "CryptoNoteCore/CryptoNoteTools.h"
 #include "CryptoNoteCore/CheckDifficulty.h"
 #include "CryptoNoteCore/CryptoNoteFormatUtils.h"
 
