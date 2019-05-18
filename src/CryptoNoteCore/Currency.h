@@ -5,7 +5,7 @@
 // Please see the included LICENSE file for more information.
 
 #pragma once
-
+#include <math.h> 
 #include <cstdint>
 #include <string>
 #include <vector>
