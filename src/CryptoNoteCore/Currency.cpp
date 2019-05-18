@@ -155,10 +155,14 @@ bool Currency::getBlockReward(uint8_t blockMajorVersion, size_t medianSize, size
   assert(m_emissionSpeedFactor > 0 && m_emissionSpeedFactor <= 8 * sizeof(uint64_t));
 
   uint64_t m_maxBlockReward = 5000000; // (50 KEG in attomic units)
-  uint64_t baseReward = blockMajorVersion<BLOCK_MAJOR_VERSION_6 ? (m_moneySupply - alreadyGeneratedCoins) >> m_emissionSpeedFactor : ((m_moneySupply - alreadyGeneratedCoins) >> m_emissionSpeedFactor) + (log(nextDifficulty) * 100000);
+  uint64_t baseReward = (m_moneySupply - alreadyGeneratedCoins) >> m_emissionSpeedFactor
+  /*
+  uint64_t baseReward = ((m_moneySupply - alreadyGeneratedCoins) >> m_emissionSpeedFactor) + (log(nextDifficulty) * 100000);
+  
   if (baseReward > m_maxBlockReward){
     baseReward = m_maxBlockReward - 1;
   }
+  */ // this new block reward algo needs fixing 
   if (alreadyGeneratedCoins == 0 && m_genesisBlockReward != 0) {
     baseReward = m_genesisBlockReward;
   }
