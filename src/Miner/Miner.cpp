@@ -69,6 +69,39 @@ void Miner::stop()
 
 void Miner::runWorkers(BlockMiningParameters blockMiningParameters, size_t threadCount)
 {
+    std::cout << InformationMsg("Started mining for difficulty of ")
+              << InformationMsg(blockMiningParameters.difficulty)
+              << InformationMsg(". Good luck! ;)\n");
+
+    try
+    {
+        blockMiningParameters.blockTemplate.nonce = Random::randomValue<uint32_t>();
+
+        for (size_t i = 0; i < threadCount; ++i)
+        {
+            m_workers.emplace_back(std::unique_ptr<System::RemoteContext<void>> (
+                new System::RemoteContext<void>(m_dispatcher, std::bind(&Miner::workerFunc, this, blockMiningParameters.blockTemplate, blockMiningParameters.difficulty, static_cast<uint32_t>(threadCount))))
+            );
+
+            blockMiningParameters.blockTemplate.nonce++;
+        }
+
+        m_workers.clear();
+    }
+    catch (const std::exception& e)
+    {
+        std::cout << WarningMsg("Error occured whilst mining: ")
+                  << WarningMsg(e.what()) << std::endl;
+
+        m_state = MiningState::MINING_STOPPED;
+    }
+
+    m_miningStopped.set();
+}
+
+
+void Miner::runWorkers(BlockMiningParameters blockMiningParameters, size_t threadCount)
+{
     std::cout << InformationMsg("Started mining at difficulty of ")
               << InformationMsg(blockMiningParameters.difficulty)
               << InformationMsg(". Good luck! ;)\n");
