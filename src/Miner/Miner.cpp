@@ -35,7 +35,7 @@ Miner::(System::Dispatcher& dispatcher, Logging::ILogger& logger) :
   m_logger(logger, "Miner") {
 }
 
-~Miner() {
+Miner() {
   assert(m_state != MiningState::MINING_IN_PROGRESS);
 }
 
