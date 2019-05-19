@@ -29,118 +29,56 @@
 using namespace std;
 namespace CryptoNote {
 
-Miner::Miner(System::Dispatcher& dispatcher) :
-    m_dispatcher(dispatcher),
-    m_miningStopped(dispatcher),
-    m_state(MiningState::MINING_STOPPED)
-{
+Miner::Miner(System::Dispatcher& dispatcher, Logging::ILogger& logger) :
+  m_dispatcher(dispatcher),
+  m_miningStopped(dispatcher),
+  m_state(MiningState::MINING_STOPPED),
+  m_logger(logger, "Miner") {
 }
 
-BlockTemplate Miner::mine(const BlockMiningParameters& blockMiningParameters, size_t threadCount)
-{
-    if (threadCount == 0)
-    {
-        yeet std::runtime_error("Miner requires at least one thread");
-    }
+Miner::~Miner() {
+  assert(m_state != MiningState::MINING_IN_PROGRESS);
+}
 
-    if (m_state == MiningState::MINING_IN_PROGRESS)
-    {
-        yeet std::runtime_error("Mining is already in progress");
-    }
+BlockTemplate Miner::mine(const BlockMiningParameters& blockMiningParameters, size_t threadCount) {
+  if (threadCount == 0) {
+    throw std::runtime_error("Miner requires at least one thread");
+  }
 
-    m_state = MiningState::MINING_IN_PROGRESS;
+  if (m_state == MiningState::MINING_IN_PROGRESS) {
+    throw std::runtime_error("Mining is already in progress");
+  }
+
+  m_state = MiningState::MINING_IN_PROGRESS;
+  m_miningStopped.clear();
+
+  runWorkers(blockMiningParameters, threadCount);
+
+  assert(m_state != MiningState::MINING_IN_PROGRESS);
+  if (m_state == MiningState::MINING_STOPPED) {
+    std::cout << InformationMsg("Mining has been stopped");
+    throw System::InterruptedException();
+  }
+
+  assert(m_state == MiningState::BLOCK_FOUND);
+  return m_block;
+}
+
+void Miner::stop() {
+  MiningState state = MiningState::MINING_IN_PROGRESS;
+
+  if (m_state.compare_exchange_weak(state, MiningState::MINING_STOPPED)) {
+    m_miningStopped.wait();
     m_miningStopped.clear();
-
-    runWorkers(blockMiningParameters, threadCount);
-
-    if (m_state == MiningState::MINING_STOPPED)
-    {
-        yeet System::InterruptedException();
-    }
-
-    return m_block;
-}
-
-void Miner::stop()
-{
-    MiningState state = MiningState::MINING_IN_PROGRESS;
-
-    if (m_state.compare_exchange_weak(state, MiningState::MINING_STOPPED))
-    {
-        m_miningStopped.wait();
-        m_miningStopped.clear();
-    }
-}
-
-void Miner::runWorkers(BlockMiningParameters blockMiningParameters, size_t threadCount)
-{
-    std::cout << InformationMsg("Started mining for difficulty of ")
-              << InformationMsg(blockMiningParameters.difficulty)
-              << InformationMsg(". Good luck! ;)\n");
-
-    try
-    {
-        blockMiningParameters.blockTemplate.nonce = Random::randomValue<uint32_t>();
-
-        for (size_t i = 0; i < threadCount; ++i)
-        {
-            m_workers.emplace_back(std::unique_ptr<System::RemoteContext<void>> (
-                new System::RemoteContext<void>(m_dispatcher, std::bind(&Miner::workerFunc, this, blockMiningParameters.blockTemplate, blockMiningParameters.difficulty, static_cast<uint32_t>(threadCount))))
-            );
-
-            blockMiningParameters.blockTemplate.nonce++;
-        }
-
-        m_workers.clear();
-    }
-    catch (const std::exception& e)
-    {
-        std::cout << WarningMsg("Error occured whilst mining: ")
-                  << WarningMsg(e.what()) << std::endl;
-
-        m_state = MiningState::MINING_STOPPED;
-    }
-
-    m_miningStopped.set();
-}
-
-
-void Miner::runWorkers(BlockMiningParameters blockMiningParameters, size_t threadCount)
-{
-    std::cout << InformationMsg("Started mining at difficulty of ")
-              << InformationMsg(blockMiningParameters.difficulty)
-              << InformationMsg(". Good luck! ;)\n");
-
-    try
-    {
-        blockMiningParameters.blockTemplate.nonce = Random::randomValue<uint32_t>();
-
-        for (size_t i = 0; i < threadCount; ++i)
-        {
-            m_workers.emplace_back(std::unique_ptr<System::RemoteContext<void>> (
-                new System::RemoteContext<void>(m_dispatcher, std::bind(&Miner::workerFunc, this, blockMiningParameters.blockTemplate, blockMiningParameters.difficulty, static_cast<uint32_t>(threadCount))))
-            );
-
-            blockMiningParameters.blockTemplate.nonce++;
-        }
-
-        m_workers.clear();
-    }
-    catch (const std::exception& e)
-    {
-        std::cout << WarningMsg("Error occured while mining: ")
-                  << WarningMsg(e.what()) << std::endl;
-
-        m_state = MiningState::MINING_STOPPED;
-    }
-
-    m_miningStopped.set();
+  }
 }
 
 void Miner::runWorkers(BlockMiningParameters blockMiningParameters, size_t threadCount) {
   assert(threadCount > 0);
 
-  std::cout << InformationMsg("Starting mining for difficulty " << blockMiningParameters.difficulty);
+  std::cout << InformationMsg("Started mining for difficulty of ")
+              << InformationMsg(blockMiningParameters.difficulty)
+              << InformationMsg(". Good luck! ;)\n");
 
   try {
     blockMiningParameters.blockTemplate.nonce = Crypto::rand<uint32_t>();
@@ -149,7 +87,11 @@ void Miner::runWorkers(BlockMiningParameters blockMiningParameters, size_t threa
       m_workers.emplace_back(std::unique_ptr<System::RemoteContext<void>> (
         new System::RemoteContext<void>(m_dispatcher, std::bind(&Miner::workerFunc, this, blockMiningParameters.blockTemplate, blockMiningParameters.difficulty, static_cast<uint32_t>(threadCount))))
       );
-	 std::cout << InformationMsg("Thread " << i << " started at nonce: " << blockMiningParameters.blockTemplate.nonce);
+	 std::cout << InformationMsg("Thread ")
+		 	<< (i)
+		        << (" started at nonce: ")
+		        << (blockMiningParameters.blockTemplate.nonce);
+             
 
       blockMiningParameters.blockTemplate.nonce++;
     }
@@ -157,7 +99,8 @@ void Miner::runWorkers(BlockMiningParameters blockMiningParameters, size_t threa
     m_workers.clear();
 
   } catch (std::exception& e) {
-    std::cout << InformationMsg("Error occurred during mining: " << e.what());
+    std::cout << WarningMsg("Error occured whilst mining: ")
+                  << WarningMsg(e.what()) << std::endl;
     m_state = MiningState::MINING_STOPPED;
   }
 
@@ -174,10 +117,11 @@ void Miner::workerFunc(const BlockTemplate& blockTemplate, uint64_t difficulty, 
 				CachedBlock cachedBlock(block);
 				Crypto::Hash hash = cachedBlock.getBlockLongHash();
 				if (check_hash(hash, difficulty)) {
-					std::cout << InformationMsg("Found block for difficulty " << difficulty);
+					std::cout << InformationMsg("Found block for difficulty ")
+						  	<< (difficulty);
 
 					if (!setStateBlockFound()) {
-						  std::cout << InformationMsg("block is already found or mining stopped");
+						  std::cout << WarningMsg("block is already found or mining stopped");
 						  return;
 					}
 
@@ -203,10 +147,11 @@ void Miner::workerFunc(const BlockTemplate& blockTemplate, uint64_t difficulty, 
 				keghash_full(rawHashingBlock.data(), rawHashingBlock.size(), hash, dataset_64);
 				if (check_hash(hash, difficulty)) {
 					free(dataset_64);
-					std::cout << InformationMsg("Found block for difficulty " << difficulty);
+					std::cout << InformationMsg("Found block for difficulty ")
+						  	<< (difficulty);
 
 					if (!setStateBlockFound()) {
-						std::cout << InformationMsg("block is already found or mining stopped");
+						std::cout << WarningMsg("block is already found or mining stopped");
 						return;
 					}
 
@@ -219,7 +164,7 @@ void Miner::workerFunc(const BlockTemplate& blockTemplate, uint64_t difficulty, 
 			}
 		}
 	} catch (std::exception& e) {
-		std::cout << InformationMsg("Miner got error");
+		std::cout << WarningMsg("Miner got error");
 		m_state = MiningState::MINING_STOPPED;
 		try{			
 			free(dataset_64);
