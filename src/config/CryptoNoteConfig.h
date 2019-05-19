@@ -70,7 +70,7 @@ How to generate a premine:
 --print-genesis-tx --genesis-block-reward-address <premine wallet address>
 
 For example:
-TurtleCoind --print-genesis-tx --genesis-block-reward-address TRTLv2Fyavy8CXG8BPEbNeCHFZ1fuDCYCZ3vW5H5LXN4K2M2MHUpTENip9bbavpHvvPwb4NDkBWrNgURAd5DB38FHXWZyoBh4wW
+Kegcoind --print-genesis-tx --genesis-block-reward-address Kv2Fyavy8CXG8BPEbNeCHFZ1fuDCYCZ3vW5H5LXN4K2M2MHUpTENip9bbavpHvvPwb4NDkBWrNgURAd5DB38FHXWZyoBh4wW
 
 * Take the hash printed, and replace it with the hash below in GENESIS_COINBASE_TX_HEX
 
@@ -173,8 +173,8 @@ const uint32_t UPGRADE_HEIGHT_V2                             = 1;
 const uint32_t UPGRADE_HEIGHT_V3                             = 2;
 const uint32_t UPGRADE_HEIGHT_V4                             = 300; // Upgrade height for CN-Lite Variant 1 switch.
 const uint32_t UPGRADE_HEIGHT_V5                             = 145000; // Upgrade height for CN-trtl Variant 2 switch.
-const uint32_t UPGRADE_HEIGHT_V6                             = 220700; // Upgrade hight for Keghash Lite varient 0 switch.
-const uint32_t UPGRADE_HEIGHT_CURRENT                        = UPGRADE_HEIGHT_V6;
+const uint32_t UPGRADE_HEIGHT_V6                             = 221225; // Upgrade hight for Keghash Lite varient 0 switch.
+const uint32_t UPGRADE_HEIGHT_CURRENT                        = UPGRADE_HEIGHT_V5; // just in case
 
 const unsigned UPGRADE_VOTING_THRESHOLD                      = 90;               // percent
 const uint32_t UPGRADE_VOTING_WINDOW                         = EXPECTED_NUMBER_OF_BLOCKS_PER_DAY;  // blocks
@@ -187,7 +187,7 @@ const uint64_t FORK_HEIGHTS[] =
 {
     145000,  // 0 (move to cn trtl)
     145001,  // 1  (place holder becuase i messed up the SOFTWARE_SUPPORTED_FORK_INDEX)
-    220700,  // 2 (move to keghash lite)
+    221225,  // 2 (move to keghash lite)
     620000,  // 3
     700000,  // 4
     800000,  // 5
@@ -292,6 +292,7 @@ const char* const SEED_NODES[] = {
   "node.kegcoin.tk:5047", // Will move to IP address when its up. (@Leo Cornelius#8123) 
   "95.217.37.172:5047", // keg.turbomine.co (@AlpHA#6476)
   "195.181.247.143:5047", // minersrepublic.com/keg/
-  "173.249.39.52:5047" // keg.cryptonote.club (@Igor#3644)
+  "173.249.39.52:5047", // keg.cryptonote.club (@Igor#3644)
+  "mine2.live:5047" // in case ip addresses die on me
 };
 } // CryptoNote
