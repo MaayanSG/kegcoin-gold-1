@@ -653,11 +653,11 @@ void make_cache(uint8_t* scratchpad, uint8_t* cache){
 	uint64_t* cache_64      = (uint64_t*)cache; 
 	uint64_t  temp_cache[4] = {0};
 	uint64_t  index[2]      = {0};
-	for(uint32_t i=0;i<iterations;i++) keghash_2(&cache[i*32], scratchpad, &cache[(i+1)*32]);
+	for(uint32_t i=0;i<mask;i++) keghash_2(&cache[i*32], scratchpad, &cache[(i+1)*32]);
 	for(uint8_t j=0;j<CACHE_ROUNDS;j++){
-		for(uint32_t i=0;i<iterations;i++){
+		for(uint32_t i=0;i<mask;i++){
 			index[0] = cache_64[i*4]&mask;
-			index[1] = (i-1+iterations)&mask; 
+			index[1] = (i-1+mask)&mask; 
 			for(uint8_t k=0;k<4;k++)
 				temp_cache[k] = ((uint64_t*)&cache[index[0]+k])[0]^((uint64_t*)&cache[index[1]+k])[0];
 			keghash_2((uint8_t*)temp_cache, scratchpad, &cache[i*32]);
@@ -722,4 +722,3 @@ void keghash_light_api(const void* data, uint32_t length, uint8_t* hash_out, uin
 void keghash_full_api(const void* data, uint32_t length, uint8_t* hash_out, uint64_t* dataset){
 	keghash_lite_full((uint8_t*)data, length, (uint8_t*)dataset, hash_out);
 }
-
