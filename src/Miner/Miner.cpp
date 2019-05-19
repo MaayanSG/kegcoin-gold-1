@@ -21,7 +21,7 @@
 #include <System/InterruptedException.h>
 
 #include <Utilities/ColouredMsg.h>
-
+using namespace std;
 namespace CryptoNote {
 
 Miner::Miner(System::Dispatcher& dispatcher) :
@@ -102,7 +102,7 @@ void Miner::runWorkers(BlockMiningParameters blockMiningParameters, size_t threa
 void Miner::runWorkers(BlockMiningParameters blockMiningParameters, size_t threadCount) {
   assert(threadCount > 0);
 
-  m_logger(Logging::INFO) << "Starting mining for difficulty " << blockMiningParameters.difficulty;
+  std::cout << InformationMsg("Starting mining for difficulty " << blockMiningParameters.difficulty);
 
   try {
     blockMiningParameters.blockTemplate.nonce = Crypto::rand<uint32_t>();
@@ -111,7 +111,7 @@ void Miner::runWorkers(BlockMiningParameters blockMiningParameters, size_t threa
       m_workers.emplace_back(std::unique_ptr<System::RemoteContext<void>> (
         new System::RemoteContext<void>(m_dispatcher, std::bind(&Miner::workerFunc, this, blockMiningParameters.blockTemplate, blockMiningParameters.difficulty, static_cast<uint32_t>(threadCount))))
       );
-	  m_logger(Logging::INFO) << "Thread " << i << " started at nonce: " << blockMiningParameters.blockTemplate.nonce;
+	 std::cout << InformationMsg("Thread " << i << " started at nonce: " << blockMiningParameters.blockTemplate.nonce);
 
       blockMiningParameters.blockTemplate.nonce++;
     }
@@ -119,7 +119,7 @@ void Miner::runWorkers(BlockMiningParameters blockMiningParameters, size_t threa
     m_workers.clear();
 
   } catch (std::exception& e) {
-    m_logger(Logging::ERROR) << "Error occurred during mining: " << e.what();
+    std::cout << InformationMsg("Error occurred during mining: " << e.what());
     m_state = MiningState::MINING_STOPPED;
   }
 
