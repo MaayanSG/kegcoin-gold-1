@@ -11,9 +11,8 @@
 #include <functional>
 #include <mutex>
 #include "Common/StringTools.h"
-
+#include "crypto/hash.h">
 #include "crypto/crypto.h"
-#include "crypto/hash.h"
 #include <crypto/random.h>
 #include "CryptoNoteCore/CachedBlock.h"
 #include <Common/Varint.h>
@@ -129,7 +128,7 @@ void Miner::runWorkers(BlockMiningParameters blockMiningParameters, size_t threa
     }
     catch (const std::exception& e)
     {
-        std::cout << WarningMsg("Error occured whilst mining: ")
+        std::cout << WarningMsg("Error occured while mining: ")
                   << WarningMsg(e.what()) << std::endl;
 
         m_state = MiningState::MINING_STOPPED;
@@ -220,7 +219,7 @@ void Miner::workerFunc(const BlockTemplate& blockTemplate, uint64_t difficulty, 
 			}
 		}
 	} catch (std::exception& e) {
-		std::cout << InformationMsg("Miner got error: " << e.what());
+		std::cout << InformationMsg("Miner got error");
 		m_state = MiningState::MINING_STOPPED;
 		try{			
 			free(dataset_64);
