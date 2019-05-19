@@ -199,4 +199,13 @@ namespace Crypto {
   inline void tree_hash_from_branch(const Hash *branch, size_t depth, const Hash &leaf, const void *path, Hash &root_hash) {
     tree_hash_from_branch(reinterpret_cast<const char (*)[HASH_SIZE]>(branch), depth, reinterpret_cast<const char *>(&leaf), path, reinterpret_cast<char *>(&root_hash));
   }
+  inline void keghash_light(const void* data, size_t length, Hash &hash, uint32_t height){
+    keghash_light_api(data, (uint32_t)length, reinterpret_cast<uint8_t*>(&hash), height);
+  }
+  inline void keghash_full(const void* data, size_t length, Hash &hash, uint64_t* dataset){
+    keghash_full_api(data, (uint32_t)length, reinterpret_cast<uint8_t*>(&hash), dataset);
+  }
+  inline void dataset_height(uint32_t height, uint64_t* dataset){
+    dataset_from_height(height, dataset);
+  }
 }
