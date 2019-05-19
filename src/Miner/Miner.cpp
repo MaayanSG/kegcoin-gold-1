@@ -169,6 +169,7 @@ void Miner::workerFunc(const BlockTemplate& blockTemplate, uint64_t difficulty, 
         std::cout << WarningMsg("Error occured whilst mining: ")
                   << WarningMsg(e.what()) << std::endl;
 
+
         m_state = MiningState::MINING_STOPPED;
     }
 }
