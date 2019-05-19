@@ -13,7 +13,7 @@ namespace WalletConfig
     const std::string_view addressPrefix = "K";
 
     /* Your coins 'Ticker', e.g. Monero = XMR, Bitcoin = BTC */
-    const std::string ticker = "KEG";
+    const std::string ticker = "LSC";
 
     /* The filename to output the CSV to in save_csv */
     const std::string csvFilename = "transactions.csv";
@@ -23,20 +23,20 @@ namespace WalletConfig
     const std::string addressBookFilename = ".addressBook.json";
 
     /* The name of your deamon */
-    const std::string daemonName = "Kegcoind";
+    const std::string daemonName = "lscd";
 
     /* The name to call this wallet */
-    const std::string walletName = "zedwallet";
+    const std::string walletName = "lwallet";
 
     /* The name of service/walletd, the programmatic rpc interface to a
        wallet */
-    const std::string walletdName = "kegcoin-service"; //(walletd)
+    const std::string walletdName = "lsc-service"; //(walletd)
 
     /* The full name of your crypto */
         const std::string coinName = std::string(CryptoNote::CRYPTONOTE_NAME); 
 
     /* Where can your users contact you for support? E.g. discord */
-    const std::string contactLink = "https://discord.gg/DzQMNJ7";
+    const std::string contactLink = "https://discord.gg/ZBFDEEb";
 
 
     /* The number of decimals your coin has */

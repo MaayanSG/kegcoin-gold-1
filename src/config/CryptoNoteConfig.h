@@ -33,7 +33,7 @@ const size_t   BLOCKCHAIN_TIMESTAMP_CHECK_WINDOW             = 60;
 const size_t   BLOCKCHAIN_TIMESTAMP_CHECK_WINDOW_V3          = 11;
 
 // MONEY_SUPPLY - total number coins to be generated
-const uint64_t MONEY_SUPPLY                                  = UINT64_C(10000000000000);
+const uint64_t MONEY_SUPPLY                                  = (uint64_t)(-1);
 const uint32_t ZAWY_DIFFICULTY_BLOCK_INDEX                   = 187000;
 const size_t   ZAWY_DIFFICULTY_V2                            = 0;
 const uint8_t  ZAWY_DIFFICULTY_DIFFICULTY_BLOCK_VERSION      = 3;
@@ -46,18 +46,11 @@ const uint64_t LWMA_2_DIFFICULTY_BLOCK_INDEX_V3              = 800000;
 const uint64_t LWMA_3_DIFFICULTY_BLOCK_INDEX                 = 2000000;
 const uint64_t DIFFICULTY_CHANGE_BLOCK_INDEX                 = 220700;
 
-const unsigned EMISSION_SPEED_FACTOR                         = 22;
+const unsigned EMISSION_SPEED_FACTOR                         = 9;
 static_assert(EMISSION_SPEED_FACTOR <= 8 * sizeof(uint64_t), "Bad EMISSION_SPEED_FACTOR");
 
 /* Premine amount */
-const uint64_t GENESIS_BLOCK_REWARD                          = UINT64_C(50000000000); //500,000 KEG for ico and compensation from old network
-/* Premine Distubution
-50,000 Keg -compensation
-350,000 KEG ICO
-50,000 KEG Community rewrads 
-40,000 dev rewards
-10,000 Airdrops and bountys
-
+const uint64_t GENESIS_BLOCK_REWARD                          = UINT64_C(0); 
 
 How to generate a premine:
 
@@ -94,9 +87,9 @@ const size_t   CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V1  = 10000;
 const size_t   CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_CURRENT = CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE;
 const size_t   CRYPTONOTE_COINBASE_BLOB_RESERVED_SIZE        = 600;
 
-const size_t   CRYPTONOTE_DISPLAY_DECIMAL_POINT              = 5;
+const size_t   CRYPTONOTE_DISPLAY_DECIMAL_POINT              = 0;
 
-const uint64_t MINIMUM_FEE                                   = UINT64_C(10);
+const uint64_t MINIMUM_FEE                                   = UINT64_C(1);
 
 /* This section defines our minimum and maximum mixin counts required for transactions */
 const uint64_t MINIMUM_MIXIN_V1                              = 0;
@@ -151,9 +144,9 @@ const uint64_t MAX_EXTRA_SIZE_V2_HEIGHT                      = 1300000;
 /* For new projects forked from this code base, the values immediately below
    should be changed to 0 to prevent issues with transaction processing 
    and other possible unexpected behavior */
-const uint64_t TRANSACTION_SIGNATURE_COUNT_VALIDATION_HEIGHT = 1400000;
-const uint64_t BLOCK_BLOB_SHUFFLE_CHECK_HEIGHT               = 1600000;
-const uint64_t TRANSACTION_INPUT_BLOCKTIME_VALIDATION_HEIGHT = 1600000;
+const uint64_t TRANSACTION_SIGNATURE_COUNT_VALIDATION_HEIGHT = 0;
+const uint64_t BLOCK_BLOB_SHUFFLE_CHECK_HEIGHT               = 0;
+const uint64_t TRANSACTION_INPUT_BLOCKTIME_VALIDATION_HEIGHT = 0;
 
 /* This describes how many blocks of "wiggle" room transactions have regarding
    when the outputs can be spent based on a reasonable belief that the outputs
@@ -171,10 +164,10 @@ const size_t   FUSION_TX_MIN_IN_OUT_COUNT_RATIO              = 4;
 
 const uint32_t UPGRADE_HEIGHT_V2                             = 1;
 const uint32_t UPGRADE_HEIGHT_V3                             = 2;
-const uint32_t UPGRADE_HEIGHT_V4                             = 300; // Upgrade height for CN-Lite Variant 1 switch.
-const uint32_t UPGRADE_HEIGHT_V5                             = 145000; // Upgrade height for CN-trtl Variant 2 switch.
-const uint32_t UPGRADE_HEIGHT_V6                             = 221225; // Upgrade hight for Keghash Lite varient 0 switch.
-const uint32_t UPGRADE_HEIGHT_CURRENT                        = UPGRADE_HEIGHT_V5; // just in case
+const uint32_t UPGRADE_HEIGHT_V4                             = 3; // Upgrade height for CN-Lite Variant 1 switch.
+const uint32_t UPGRADE_HEIGHT_V5                             = 4; // Upgrade height for CN-trtl Variant 2 switch.
+const uint32_t UPGRADE_HEIGHT_V6                             = 10; // Upgrade hight for Keghash Lite varient 0 switch.
+const uint32_t UPGRADE_HEIGHT_CURRENT                        = UPGRADE_HEIGHT_V6;
 
 const unsigned UPGRADE_VOTING_THRESHOLD                      = 90;               // percent
 const uint32_t UPGRADE_VOTING_WINDOW                         = EXPECTED_NUMBER_OF_BLOCKS_PER_DAY;  // blocks
@@ -185,16 +178,16 @@ static_assert(UPGRADE_VOTING_WINDOW > 1, "Bad UPGRADE_VOTING_WINDOW");
 /* Block heights we are going to have hard forks at */
 const uint64_t FORK_HEIGHTS[] =
 {
-    145000,  // 0 (move to cn trtl)
-    145001,  // 1  (place holder becuase i messed up the SOFTWARE_SUPPORTED_FORK_INDEX)
-    221225,  // 2 (move to keghash lite)
-    620000,  // 3
-    700000,  // 4
-    800000,  // 5
-    1000000, // 6
-    1200000, // 7
-    1300000, // 8
-    1400000, // 9
+    1,  // 0 (move to cn trtl)
+    2,  // 1  (place holder becuase i messed up the SOFTWARE_SUPPORTED_FORK_INDEX)
+    3,  // 2 (move to keghash lite)
+    4,  // 3
+    5,  // 4
+    6,  // 5
+    7, // 6
+    8, // 7
+    9, // 8
+    10, // 9
     1600000, // 10
     1800000, // 11
     2000000, // 12
@@ -224,7 +217,7 @@ const char     P2P_NET_DATA_FILENAME[]                       = "p2pstate.bin";
 const char     MINER_CONFIG_FILE_NAME[]                      = "miner_conf.json";
 } // parameters
 
-const char     CRYPTONOTE_NAME[]                             = "KegcoinGold";
+const char     CRYPTONOTE_NAME[]                             = "Loosercoin";
 
 const uint8_t  TRANSACTION_VERSION_1                         =  1;
 const uint8_t  TRANSACTION_VERSION_2                         =  2;
@@ -244,9 +237,9 @@ const size_t   BLOCKS_IDS_SYNCHRONIZING_DEFAULT_COUNT        =  10000;  //by def
 const uint64_t BLOCKS_SYNCHRONIZING_DEFAULT_COUNT            =  100;    //by default, blocks count in blocks downloading
 const size_t   COMMAND_RPC_GET_BLOCKS_FAST_MAX_COUNT         =  1000;
 
-const int      P2P_DEFAULT_PORT                              =  5047;
-const int      RPC_DEFAULT_PORT                              =  4057;
-const int      SERVICE_DEFAULT_PORT                          =  5000;
+const int      P2P_DEFAULT_PORT                              =  5555;
+const int      RPC_DEFAULT_PORT                              =  4444;
+const int      SERVICE_DEFAULT_PORT                          =  3333;
 
 const size_t   P2P_LOCAL_WHITE_PEERLIST_LIMIT                =  1000;
 const size_t   P2P_LOCAL_GRAY_PEERLIST_LIMIT                 =  5000;
@@ -284,15 +277,10 @@ const char     LATEST_VERSION_URL[]                          = "http://github.co
 const std::string LICENSE_URL                                = "https://github.com/kegcoin-project/kegcoin-gold/blob/master/LICENSE";
 const static   boost::uuids::uuid CRYPTONOTE_NETWORK         =
 {
-    {  0x14, 0x50, 0x47, 0x25, 0x45, 0x6f, 0x6b, 0x5b, 0x56, 0x38, 0x01, 0x22, 0x12, 0x2a, 0x02, 0x35  }
+    {  0x14, 0x50, 0x47, 0x25, 0x45, 0x6f, 0x8b, 0x5b, 0x56, 0x98, 0x01, 0x22, 0x12, 0x2a, 0x02, 0x35  }
 };
 
 const char* const SEED_NODES[] = {
-  "99.248.93.15:5047", // keg.mine2.live (@def#4726)
-  "node.kegcoin.tk:5047", // Will move to IP address when its up. (@Leo Cornelius#8123) 
-  "95.217.37.172:5047", // keg.turbomine.co (@AlpHA#6476)
-  "195.181.247.143:5047", // minersrepublic.com/keg/
-  "173.249.39.52:5047", // keg.cryptonote.club (@Igor#3644)
-  "mine2.live:5047" // in case ip addresses die on me
+  "mine2.live:5555"
 };
 } // CryptoNote
