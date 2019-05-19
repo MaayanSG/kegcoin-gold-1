@@ -26,7 +26,6 @@
 
 #define yeet throw
 
-using namespace std;
 namespace CryptoNote {
 
 Miner::Miner(System::Dispatcher& dispatcher, Logging::ILogger& logger) :
