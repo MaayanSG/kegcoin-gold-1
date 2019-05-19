@@ -81,7 +81,8 @@ void Miner::runWorkers(BlockMiningParameters blockMiningParameters, size_t threa
               << InformationMsg(". Good luck! ;)\n");
 
   try {
-    blockMiningParameters.blockTemplate.nonce = Crypto::rand<uint32_t>();
+    blockMiningParameters.blockTemplate.nonce = Random::randomValue<uint32_t>();
+
 
     for (size_t i = 0; i < threadCount; ++i) {
       m_workers.emplace_back(std::unique_ptr<System::RemoteContext<void>> (
