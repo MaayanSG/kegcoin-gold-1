@@ -648,8 +648,7 @@ void make_scratchpad(uint8_t* seed, uint8_t* scratchpad){
 void make_cache(uint8_t* scratchpad, uint8_t* cache){
 	/* 64MiB cache is allocated before executing
 	   this function */
-	uint32_t  iterations    = 67108864/HASH_BYTES;
-	uint32_t  mask          = iterations-1;
+	uint32_t  mask          = 67108864/HASH_BYTES-1;
 	uint64_t* cache_64      = (uint64_t*)cache; 
 	uint64_t  temp_cache[4] = {0};
 	uint64_t  index[2]      = {0};
