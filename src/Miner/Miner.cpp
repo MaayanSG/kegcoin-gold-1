@@ -111,25 +111,25 @@ void Miner::workerFunc(const BlockTemplate& blockTemplate, uint64_t difficulty, 
         CachedBlock cachedBlock(block);
         if (block.majorVersion < BLOCK_MAJOR_VERSION_6)
 	{
-            while (m_state == MiningState::MINING_IN_PROGRESS)
-            {
-                CachedBlock cachedBlock(block);
-                Crypto::Hash hash = cachedBlock.getBlockLongHash();
-    
-                if (check_hash(hash, difficulty))
-                {
-                    if (!setStateBlockFound())
-                    {
-                        return;
-                    }
+           while (m_state == MiningState::MINING_IN_PROGRESS)
+        {
+            CachedBlock cachedBlock(block);
+            Crypto::Hash hash = cachedBlock.getBlockLongHash();
 
-                    m_block = block;
+            if (check_hash(hash, difficulty))
+            {
+                if (!setStateBlockFound())
+                {
                     return;
                 }
 
-                incrementHashCount();
-                block.nonce += nonceStep;
+                m_block = block;
+                return;
             }
+
+            incrementHashCount();
+            block.nonce += nonceStep;
+        }
         } else
 	{
             uint32_t height = cachedBlock.getBlockIndex();
