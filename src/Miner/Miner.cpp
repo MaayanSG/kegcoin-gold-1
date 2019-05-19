@@ -109,7 +109,8 @@ void Miner::workerFunc(const BlockTemplate& blockTemplate, uint64_t difficulty, 
     {
         BlockTemplate block = blockTemplate;
         CachedBlock cachedBlock(block);
-        if (block.majorVersion < BLOCK_MAJOR_VERSION_6){
+        if (block.majorVersion < BLOCK_MAJOR_VERSION_6)
+	{
             while (m_state == MiningState::MINING_IN_PROGRESS)
             {
                 CachedBlock cachedBlock(block);
@@ -129,7 +130,8 @@ void Miner::workerFunc(const BlockTemplate& blockTemplate, uint64_t difficulty, 
                 incrementHashCount();
                 block.nonce += nonceStep;
             }
-        } else{
+        } else
+	{
             uint32_t height = cachedBlock.getBlockIndex();
 			dataset_64      = (uint64_t*)calloc(536870912,8);
 			if(!dataset_64) exit(1);
@@ -142,7 +144,8 @@ void Miner::workerFunc(const BlockTemplate& blockTemplate, uint64_t difficulty, 
 				CachedBlock cachedBlock(block);
 				const auto& rawHashingBlock = cachedBlock.getParentBlockHashingBinaryArray(true);
 				keghash_full(rawHashingBlock.data(), rawHashingBlock.size(), hash, dataset_64);
-				if (check_hash(hash, difficulty)) {
+				if (check_hash(hash, difficulty))
+				{
 					free(dataset_64);
 					std::cout << InformationMsg("Found block for difficulty ")
                                     << (difficulty);
@@ -160,6 +163,7 @@ void Miner::workerFunc(const BlockTemplate& blockTemplate, uint64_t difficulty, 
 				block.nonce += nonceStep;
 			}
         }
+    } 
     catch (const std::exception &e)
     {
         std::cout << WarningMsg("Error occured whilst mining: ")
