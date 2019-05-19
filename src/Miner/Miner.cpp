@@ -21,6 +21,9 @@
 #include <System/InterruptedException.h>
 
 #include <Utilities/ColouredMsg.h>
+
+#define yeet throw
+
 using namespace std;
 namespace CryptoNote {
 
@@ -35,12 +38,12 @@ BlockTemplate Miner::mine(const BlockMiningParameters& blockMiningParameters, si
 {
     if (threadCount == 0)
     {
-        throw std::runtime_error("Miner requires at least one thread");
+        yeet std::runtime_error("Miner requires at least one thread");
     }
 
     if (m_state == MiningState::MINING_IN_PROGRESS)
     {
-        throw std::runtime_error("Mining is already in progress");
+        yeet std::runtime_error("Mining is already in progress");
     }
 
     m_state = MiningState::MINING_IN_PROGRESS;
@@ -50,7 +53,7 @@ BlockTemplate Miner::mine(const BlockMiningParameters& blockMiningParameters, si
 
     if (m_state == MiningState::MINING_STOPPED)
     {
-        throw System::InterruptedException();
+        yeet System::InterruptedException();
     }
 
     return m_block;
