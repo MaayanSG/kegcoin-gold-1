@@ -1,6 +1,7 @@
 // Copyright (c) 2012-2017, The CryptoNote developers, The Bytecoin developers
 // Copyright (c) 2014-2018, The Monero Project
 // Copyright (c) 2018-2019, The TurtleCoin Developers
+// Copyright (c) 2019, The Kegcoin Gold Developers
 //
 // Please see the included LICENSE file for more information.
 
@@ -11,10 +12,12 @@
 #include <functional>
 #include <mutex>
 #include "Common/StringTools.h"
-
+#include "crypto/hash.h"
 #include "crypto/crypto.h"
 #include <crypto/random.h>
 #include "CryptoNoteCore/CachedBlock.h"
+#include <Common/Varint.h>
+#include <config/CryptoNoteConfig.h>
 #include "CryptoNoteCore/CheckDifficulty.h"
 #include "CryptoNoteCore/CryptoNoteFormatUtils.h"
 
@@ -101,30 +104,62 @@ void Miner::runWorkers(BlockMiningParameters blockMiningParameters, size_t threa
 
 void Miner::workerFunc(const BlockTemplate& blockTemplate, uint64_t difficulty, uint32_t nonceStep)
 {
+    uint64_t* dataset_64; // Initilise the dataset varable
     try
     {
         BlockTemplate block = blockTemplate;
-
-        while (m_state == MiningState::MINING_IN_PROGRESS)
-        {
-            CachedBlock cachedBlock(block);
-            Crypto::Hash hash = cachedBlock.getBlockLongHash();
-
-            if (check_hash(hash, difficulty))
+        CachedBlock cachedBlock(block);
+        if (block.majorVersion < BLOCK_MAJOR_VERSION_6){
+            while (m_state == MiningState::MINING_IN_PROGRESS)
             {
-                if (!setStateBlockFound())
+                CachedBlock cachedBlock(block);
+                Crypto::Hash hash = cachedBlock.getBlockLongHash();
+    
+                if (check_hash(hash, difficulty))
                 {
+                    if (!setStateBlockFound())
+                    {
+                        return;
+                    }
+
+                    m_block = block;
                     return;
                 }
 
-                m_block = block;
-                return;
+                incrementHashCount();
+                block.nonce += nonceStep;
             }
+        } else{
+            uint32_t height = cachedBlock.getBlockIndex();
+			dataset_64      = (uint64_t*)calloc(536870912,8);
+			if(!dataset_64) exit(1);
+			std::cout << InformationMsg("Initialising dataset");
+			Crypto::dataset_height(height, dataset_64);
+			std::cout << InformationMsg("Finished one-time initialisation");
+			std::cout << InformationMsg("Started mining on dataset");
+			Crypto::Hash hash;
+            while (m_state == MiningState::MINING_IN_PROGRESS) {
+				CachedBlock cachedBlock(block);
+				const auto& rawHashingBlock = cachedBlock.getParentBlockHashingBinaryArray(true);
+				keghash_full(rawHashingBlock.data(), rawHashingBlock.size(), hash, dataset_64);
+				if (check_hash(hash, difficulty)) {
+					free(dataset_64);
+					std::cout << InformationMsg("Found block for difficulty ")
+                                    << (difficulty);
 
-            incrementHashCount();
-            block.nonce += nonceStep;
+					if (!setStateBlockFound()) {
+						std::cout << InformationMsg("block is already found or mining stopped");
+						return;
+					}
+
+					m_block = block;
+					return;
+				}
+
+				incrementHashCount();
+				block.nonce += nonceStep;
+			}
         }
-    }
     catch (const std::exception &e)
     {
         std::cout << WarningMsg("Error occured whilst mining: ")
