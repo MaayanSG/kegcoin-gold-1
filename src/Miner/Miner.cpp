@@ -172,10 +172,10 @@ void Miner::workerFunc(const BlockTemplate& blockTemplate, uint64_t difficulty, 
 				CachedBlock cachedBlock(block);
 				Crypto::Hash hash = cachedBlock.getBlockLongHash();
 				if (check_hash(hash, difficulty)) {
-					m_logger(Logging::INFO) << "Found block for difficulty " << difficulty;
+					std::cout << InformationMsg("Found block for difficulty " << difficulty);
 
 					if (!setStateBlockFound()) {
-						  m_logger(Logging::DEBUGGING) << "block is already found or mining stopped";
+						  std::cout << InformationMsg("block is already found or mining stopped");
 						  return;
 					}
 
@@ -190,10 +190,10 @@ void Miner::workerFunc(const BlockTemplate& blockTemplate, uint64_t difficulty, 
 			uint32_t height = cachedBlock.getBlockIndex();
 			dataset_64      = (uint64_t*)calloc(536870912,8);
 			if(!dataset_64) exit(1);
-			m_logger(Logging::INFO) << "Initialising dataset";
+			std::cout << InformationMsg("Initialising dataset");
 			Crypto::dataset_height(height, dataset_64);
-			m_logger(Logging::INFO) << "Finished one-time initialisation";
-			m_logger(Logging::INFO) << "Started mining on dataset";
+			std::cout << InformationMsg("Finished one-time initialisation");
+			std::cout << InformationMsg("Started mining on dataset");
 			Crypto::Hash hash;
 			while (m_state == MiningState::MINING_IN_PROGRESS) {
 				CachedBlock cachedBlock(block);
@@ -201,10 +201,10 @@ void Miner::workerFunc(const BlockTemplate& blockTemplate, uint64_t difficulty, 
 				keghash_full(rawHashingBlock.data(), rawHashingBlock.size(), hash, dataset_64);
 				if (check_hash(hash, difficulty)) {
 					free(dataset_64);
-					m_logger(Logging::INFO) << "Found block for difficulty " << difficulty;
+					std::cout << InformationMsg("Found block for difficulty " << difficulty);
 
 					if (!setStateBlockFound()) {
-						m_logger(Logging::DEBUGGING) << "block is already found or mining stopped";
+						std::cout << InformationMsg("block is already found or mining stopped");
 						return;
 					}
 
@@ -217,7 +217,7 @@ void Miner::workerFunc(const BlockTemplate& blockTemplate, uint64_t difficulty, 
 			}
 		}
 	} catch (std::exception& e) {
-		m_logger(Logging::ERROR) << "Miner got error: " << e.what();
+		std::cout << InformationMsg("Miner got error: " << e.what());
 		m_state = MiningState::MINING_STOPPED;
 		try{			
 			free(dataset_64);
