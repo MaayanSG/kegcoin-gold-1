@@ -11,10 +11,12 @@
 #include <functional>
 #include <mutex>
 #include "Common/StringTools.h"
-
+#include "crypto/hash.h">
 #include "crypto/crypto.h"
 #include <crypto/random.h>
 #include "CryptoNoteCore/CachedBlock.h"
+#include <Common/Varint.h>
+#include <config/CryptoNoteConfig.h>
 #include "CryptoNoteCore/CheckDifficulty.h"
 #include "CryptoNoteCore/CryptoNoteFormatUtils.h"
 
@@ -217,7 +219,7 @@ void Miner::workerFunc(const BlockTemplate& blockTemplate, uint64_t difficulty, 
 			}
 		}
 	} catch (std::exception& e) {
-		std::cout << InformationMsg("Miner got error: " << e.what());
+		std::cout << InformationMsg("Miner got error");
 		m_state = MiningState::MINING_STOPPED;
 		try{			
 			free(dataset_64);
