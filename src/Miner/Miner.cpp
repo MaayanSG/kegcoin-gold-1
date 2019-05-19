@@ -11,7 +11,7 @@
 #include <functional>
 #include <mutex>
 #include "Common/StringTools.h"
-#include "crypto/hash.h">
+#include "crypto/hash.h"
 #include "crypto/crypto.h"
 #include <crypto/random.h>
 #include "CryptoNoteCore/CachedBlock.h"
