@@ -28,14 +28,14 @@
 
 namespace CryptoNote {
 
-miner::(System::Dispatcher& dispatcher, Logging::ILogger& logger) :
+Miner::(System::Dispatcher& dispatcher, Logging::ILogger& logger) :
   m_dispatcher(dispatcher),
   m_miningStopped(dispatcher),
   m_state(MiningState::MINING_STOPPED),
   m_logger(logger, "Miner") {
 }
 
-Miner::~Miner() {
+Miner::Miner() {
   assert(m_state != MiningState::MINING_IN_PROGRESS);
 }
 
