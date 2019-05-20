@@ -1,5 +1,7 @@
 // Copywrite 2019 The kegcoin Gold devs
 //
+// Please see the included LICENSE file for more information.
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -670,14 +672,14 @@ void calc_dataset(uint8_t* cache, uint64_t* out){
 	}
 }
 
-void keghash_lite_full(uint8_t* data, uint32_t lenght, uint8_t* dataset, uint8_t* result){
+void keghash_pow_full(uint8_t* data, uint32_t lenght, uint8_t* dataset, uint8_t* result){
 	uint64_t  seed_64[4] = {0}; 
 	uint8_t*  seed       = (uint8_t*)seed_64; 
 	blake2b(seed, 32, data, (size_t) lenght, NULL, 0);
 	keghash_3_full(seed, (uint64_t*)dataset, result);
 }
 
-void keghash_lite_light(uint8_t* data, uint32_t lenght, uint8_t* cache, uint8_t* result){
+void keghash_pow_light(uint8_t* data, uint32_t lenght, uint8_t* cache, uint8_t* result){
 	uint64_t  seed_64[4] = {0}; 
 	uint8_t*  seed       = (uint8_t*)seed_64; 
 	blake2b(seed, 32, data, (size_t) lenght, NULL, 0);
@@ -714,10 +716,11 @@ void keghash_light_api(const void* data, uint32_t length, uint8_t* hash_out, uin
 	uint8_t*  cache       = (uint8_t*)cache_64;
 	if (!cache_64) error_exit(1);
 	cache_from_height(height, cache);
-	keghash_lite_light((uint8_t*)data, length, cache, hash_out);
+	keghash_pow_light((uint8_t*)data, length, cache, hash_out);
 	free(cache_64);
 }
 
 void keghash_full_api(const void* data, uint32_t length, uint8_t* hash_out, uint64_t* dataset){
-	keghash_lite_full((uint8_t*)data, length, (uint8_t*)dataset, hash_out);
+	keghash_pow_full((uint8_t*)data, length, (uint8_t*)dataset, hash_out);
 }
+
